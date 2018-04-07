@@ -1,0 +1,33 @@
+
+.tile{
+	width: 80px;
+	height: 80px;
+	font-size: 60px;
+	font-family: Helvetica;
+}
+
+.gameBoard{
+	display: none;
+}
+
+.row
+{
+  display: table;
+  width: 100%; /*Optional*/
+  table-layout: fixed; /*Optional*/
+  border-spacing: 10px; /*Optional*/
+}
+.column
+{
+	width: 33%;
+  display: table-cell;
+}
+img {
+	width: 40%;
+	height: 40%;
+	align: middle;
+}
+
+button{
+	text-decoration: none;
+}

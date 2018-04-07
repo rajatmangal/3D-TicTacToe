@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.dev.js"></script>
+  </head>
+  <body>
+  <div class="container">
+           <div class="menu">
+             <div class="jumbotron">
+               <h2>Welcome to 3D tic tac toe game</h2>
+             </div>
+
+
+
+
+               <h4>Create a new Game</h4>
+               <input type="text" name="name" id="nameNew" placeholder="Enter your name" required>
+               <button class="btn btn-info" id="new">New Game</button>
+               <br><br>
+               <h4>Join an existing game</h4>
+               <input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
+               <input type="text" name="room" id="room" placeholder="Enter Game ID" required>
+               <button class="btn btn-info" id="join">Join Game</button>
+           </div>
+           <div class="gameBoard">
+             <div class="jumbotron">
+               <h2>Welcome to 3D tic tac toe game</h2>
+             </div>
+               <h2 id="userHello"></h2>
+               <h3 id="turn"></h3>
+               <center><img src="pic.jpg"></center>
+               <div class="row">
+               <div class = "column">
+               <table>
+                 <h3>This is the upper layer</h3>
+                   <tr>
+                       <td><button class="tile" id="button_000"></button></td>
+                       <td><button class="tile" id="button_001"></button></td>
+                       <td><button class="tile" id="button_002"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_010"></button></td>
+                       <td><button class="tile" id="button_011"></button></td>
+                       <td><button class="tile" id="button_012"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_020"></button></td>
+                       <td><button class="tile" id="button_021"></button></td>
+                       <td><button class="tile" id="button_022"></button></td>
+                   </tr>
+               </table>
+             </div>
+               <div class = "column">
+               <table>
+                 <h3>This is the middle layer</h3>
+                   <tr>
+                       <td><button class="tile" id="button_100"></button></td>
+                       <td><button class="tile" id="button_101"></button></td>
+                       <td><button class="tile" id="button_102"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_110"></button></td>
+                       <td><button class="tile" id="button_111"></button></td>
+                       <td><button class="tile" id="button_112"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_120"></button></td>
+                       <td><button class="tile" id="button_121"></button></td>
+                       <td><button class="tile" id="button_122"></button></td>
+                   </tr>
+               </table>
+             </div>
+             <div class = "column">
+               <table>
+                 <h3>This is the bottom layer</h3>
+                   <tr>
+                       <td><button class="tile" id="button_200"></button></td>
+                       <td><button class="tile" id="button_201"></button></td>
+                       <td><button class="tile" id="button_202"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_210"></button></td>
+                       <td><button class="tile" id="button_211"></button></td>
+                       <td><button class="tile" id="button_212"></button></td>
+                   </tr>
+                   <tr>
+                       <td><button class="tile" id="button_220"></button></td>
+                       <td><button class="tile" id="button_221"></button></td>
+                       <td><button class="tile" id="button_222"></button></td>
+                   </tr>
+               </table>
+             </div>
+           </div>
+           </div>
+       </div>
+
+<br><br><br><br><br>
+       <div class="container menu">
+       <div id="accordion">
+         <div class="card">
+           <div class="card-header" id="headingOne">
+             <h5 class="mb-0">
+               <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                 How To Play the Game
+               </button>
+             </h5>
+           </div>
+
+           <div id="collapseOne" class="collapse" aria-expanded="false" aria-labelledby="headingOne" data-parent="#accordion">
+             <div class="card-body">
+               <ul>
+                   <li>You have 2 options i.e. either to create a new game or enter a ongoing game.</li>
+                   <li>If you will click on create a new game then you can start a new game and other players can join you game.</li>
+                   <li>If you will click on join game then you have to fill the room id to join that existing game.</li>
+                   <li>If the ongoing game alredy has 2 players then you cananot join the game.</li>
+               </ul>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+    <center> <a href="./logout"><button class="btn btn-info">Log Out</button></a> </center>
+       <script src="jquery-3.3.1.js"></script>
+       <script type="text/javascript" src="bootstrap.js"></script>
+       <script src="game.js"></script>
+   </body>
+</html>
