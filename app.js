@@ -147,8 +147,8 @@ io.on('connection',function(socket){
             room: data.room
         });
     });
-    
+
     socket.on('gameEnded', function(data){
         socket.broadcast.to(data.room).emit('gameEnd', data);
-    })
+    });
 });

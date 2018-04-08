@@ -10,7 +10,13 @@ var Player = function(name, type){
 
 var Game = function(roomId){
     this.roomId = roomId;
-    this.board = [];
+    this.board = new Array();
+    for(var i = 0 ; i < 3 ; i++) {
+      this.board[i] = new Array()
+      for(var j = 0 ; j < 3 ; j++) {
+        this.board[i][j] = new Array();
+      }
+    }
     this.moves = 0;
 }
 
@@ -84,9 +90,10 @@ socket.on('player2', function(data){
 
 //Opponent played his turn. Update UI.
 socket.on('turnPlayed', function(data){
-    var row = data.tile.split('_')[1][0];
-    var col = data.tile.split('_')[1][1];
+    //var row = data.tile.split('_')[1][0];
+    //var col = data.tile.split('_')[1][1];
     var opponentType = player.getPlayerType() == PlayerOne ? PlayerTwo : PlayerOne;
+
     $('#'+data.tile).text(opponentType);
     $('#'+data.tile).prop('disabled', true);
     //game.updateBoard(opponentType, row, col, data.tile);
@@ -105,7 +112,7 @@ socket.on('err', function(data){
 for(var i=0; i<3; i++) {
   for(var j=0; j<3; j++) {
     for(var k=0; k<3; k++) {
-      $('#button_' + i + '' + j + '' + k).on('click', function(){
+      $('#' + i + '' + j + '' + k).on('click', function(){
         if(!player.currentTurn){
             alert('Its not your turn!');
             return;
@@ -114,6 +121,12 @@ for(var i=0; i<3; i++) {
             alert('This tile has already been played on!');
         }
         var clickedTile = $(this).attr('id');
+        var board = parseInt(clickedTile.charAt(0));
+        var row = parseInt(clickedTile.charAt(1));
+        var col = parseInt(clickedTile.charAt(2));
+        game.board[board][row][col] = player.type;
+        console.log(game.board[1][1][1])
+
         var turnObj = {
             tile: clickedTile,
             room: game.roomId
@@ -122,6 +135,31 @@ for(var i=0; i<3; i++) {
         $('#'+this.id).text(player.type);
         $('#'+this.id).prop('disabled', true);
         player.setCurrentTurn(false);
+        if(isWon(game.board[0][0][0],game.board[0][0][1],game.board[0][0][2],game.board[0][1][0],game.board[0][1][1],game.board[0][1][2],game.board[0][2][0],game.board[0][2][1],game.board[0][2][2]))
+        {
+          alert(player.name + " won");
+        }
+        else if(isWon(game.board[1][0][0],game.board[1][0][1],game.board[1][0][2],game.board[1][1][0],game.board[1][1][1],game.board[1][1][2],game.board[1][2][0],game.board[1][2][1],game.board[1][2][2]))
+        {
+          alert(player.name + " won");
+        }
+        else if(isWon(game.board[2][0][0],game.board[2][0][1],game.board[2][0][2],game.board[2][1][0],game.board[2][1][1],game.board[2][1][2],game.board[2][2][0],game.board[2][2][1],game.board[2][2][2]))
+        {
+          alert(player.name + " won");
+        }
+        else if(isWon(game.board[0][0][0],game.board[1][0][0],game.board[2][0][0],game.board[0][1][0],game.board[1][1][0],game.board[2][1][0],game.board[0][2][0],game.board[1][2][0],game.board[2][2][0]))
+        {
+          alert(player.name + " won");
+        }
+        else if(isWon(game.board[0][0][1],game.board[1][0][1],game.board[2][0][1],game.board[0][1][1],game.board[1][1][1],game.board[2][1][1],game.board[0][2][1],game.board[1][2][1],game.board[2][2][1]))
+        {
+          alert(player.name + " won");
+        }
+        else if(isWon(game.board[0][0][2],game.board[1][0][2],game.board[2][0][2],game.board[0][1][2],game.board[1][1][2],game.board[2][1][2],game.board[0][2][2],game.board[1][2][2],game.board[2][2][2]))
+        {
+          alert(player.name + " won");
+        }
+        console.log(game.board);
         //game.checkWinner();
         //this.board[row][col] = type;
         //this.moves ++;
@@ -130,6 +168,42 @@ for(var i=0; i<3; i++) {
   }
 }
 
+function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,row3Col2,row3Col3)
+{
+    if(row1Col1 === row1Col2 && row1Col2 === row1Col3 && (row1Col1 === 'X' || row1Col1 === 'O'))
+    {
+      return true;
+    }
+    else if(row2Col1 === row2Col2 && row2Col2 === row2Col3 && (row2Col1 === 'X' || row2Col1 === 'O'))
+    {
+      return true;
+    }
+    else if(row3Col1 === row3Col2 && row3Col2 === row3Col3 && (row3Col1 === 'X' || row3Col1 === 'O'))
+    {
+      return true;
+    }
+    else if(row1Col1 === row2Col1 && row2Col1 === row3Col1 && (row1Col1 === 'X' || row1Col1 === 'O'))
+    {
+      return true;
+    }
+    else if(row1Col2 === row2Col2 && row2Col2 === row3Col2 && (row1Col2 === 'X' || row1Col2 === 'O'))
+    {
+      return true;
+    }
+    else if(row1Col3 === row2Col3 && row2Col3 === row3Col3 && (row1Col3 === 'X' || row1Col3 === 'O'))
+    {
+      return true;
+    }
+    else if(row1Col1 === row2Col2 && row2Col2 === row3Col3 && (row1Col1 === 'X' || row1Col1 === 'O'))
+    {
+      return true;
+    }
+    else if(row1Col3 === row2Col2 && row2Col2 === row3Col1 &&  (row1Col3 === 'X' || row1Col3 === 'O'))
+    {
+      return true;
+    }
+    return false;
+}
     //Game Class Definition
 
 
