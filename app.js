@@ -5,6 +5,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var socket = require('socket.io');
+var router = express.Router();
 
 var User = require('./models/user');
 
@@ -37,7 +38,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Home Page
 app.get('/', function(req, res) {
-  res.render("home");
+  console.log(req.user);
+  res.render("home", {user: req.user});
   //res.send("You are on the Home page!");
 })
 
@@ -53,7 +55,7 @@ app.post('/register', function(req, res) {
   var lastName = req.body.lastName;
   var username = req.body.username;
   var email = req.body.email;
-  var newUser = new User({firstName: firstName, lastName: lastName, username: username, email: email});
+  var newUser = new User({firstName: firstName, lastName: lastName, username: username, email: email, gamesWon: 0, gamesLost: 0, totalPoints: 0});
   User.register(newUser, req.body.password, function(err, user) {
     if(err) {
       console.log(err);
@@ -153,6 +155,45 @@ io.on('connection',function(socket){
     });
 
     socket.on('playerWon', function(data) {
-      io.sockets.to(data.room).emit('playerWon', data);
+      var gamesWon1;
+      var totalPoints1;
+
+      User.find({username: data.username}, function(err, user) {
+        if(err) {
+          throw err;
+        }
+        gamesWon1 = user[0].gamesWon + 1;
+        totalPoints1 = user[0].totalPoints + 10;
+
+        User.update({username: data.username}, {$set: {gamesWon: gamesWon1, totalPoints: totalPoints1}}, function(err, result) {
+          if (err) {
+            throw err;
+          }
+        });
+        io.sockets.to(data.room).emit('playerWon', data);
+      });
+
+    });
+
+    socket.on('losers', function(data) {
+      socket.broadcast.to(data.room).emit("losers", data);
+    });
+
+    socket.on('reducePoints', function(data) {
+      var gamesLost1;
+      var totalPoints1;
+      console.log("data username is: " + data.username);
+      User.find({username: data.username}, function(err, user) {
+        gamesLost1 = user[0].gamesLost + 1;
+        totalPoints1 = user[0].totalPoints - 5;
+        console.log("user is: " + user[0].username + "  " + user[0].gamesWon);
+        User.update({username: data.username}, {$set: {gamesLost: gamesLost1, totalPoints: totalPoints1}}, function(err, result) {
+          if (err) {
+            throw err;
+          }
+          console.log(result)
+        });
+      });
+
     });
 });

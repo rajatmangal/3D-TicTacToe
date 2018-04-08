@@ -8,7 +8,10 @@ var UserSchema = new mongoose.Schema({
   age: Number,
   gender: String,
   email: String,
-  password: String
+  password: String,
+  gamesWon: Number,
+  gamesLost: Number,
+  totalPoints: Number
 });
 
 // This adds some methods to the UserSchema

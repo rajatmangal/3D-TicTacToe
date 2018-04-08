@@ -1,9 +1,10 @@
 var socket = io.connect('http://localhost:3000');
 
 
-var Player = function(name, type){
+var Player = function(name, type , username){
     this.name = name;
     this.type = type;
+    this.username = username;
     this.currentTurn = true;
     this.playsArr = 0;
 }
@@ -23,20 +24,24 @@ var Game = function(roomId){
 var PlayerOne = 'X', PlayerTwo = 'O';
 var player;
 var game;
+var gameOver = false;
 
 
 $('#new').on('click', function(){
-    var name = $('#nameNew').val();
+    var name = $('#new').attr("name");
+    var username = $('#new').attr("name1");
     if(!name){
         alert('Please enter your name.');
         return;
     }
     socket.emit('startNewGame', {name: name});
-    player = new Player(name, PlayerOne);
+    console.log(username);
+    player = new Player(name, PlayerOne , username);
 });
 
 $('#join').on('click', function(){
-    var name = $('#nameJoin').val();
+    var name = $('#join').attr("name");
+    var username = $('#join').attr("name1")
     roomID = $('#room').val();
     if(!name || !roomID){
         alert('Please enter your name and game ID.');
@@ -44,9 +49,10 @@ $('#join').on('click', function(){
     }
     socket.emit('joinExistingGame', {
       name: name,
-      room: roomID
+      room: roomID,
     });
-    player = new Player(name, PlayerTwo);
+    console.log(username);
+    player = new Player(name, PlayerTwo, username);
 });
 
 socket.on('newGame', function(data){
@@ -111,12 +117,26 @@ socket.on('err', function(data){
 
 
 socket.on('playerWon', function(data) {
-  var p = document.createElement('p');
-  var t = document.createTextNode(data.name + " won the game.");
-  p.appendChild(t);
-  document.body.appendChild(p);
+  for(var i=0; i<3; i++) {
+    for(var j=0; j<3; j++) {
+      for(var k=0; k<3; k++) {
+        $('#' + i + '' + j + '' + k).off();
+        $('#' + i + '' + j + '' + k).on('click', function(){
+          alert("Sorry the game is already over. Please start a new game.")
+        });
+      }
+    }
+  }
+ $('#turn').text(data.name + ' won');
+  // socket.emit('losers', {
+  //   room: game.roomId,
+  //   username: $('#turn').attr("name")
+  // });
 });
 
+
+
+var move;
 for(var i=0; i<3; i++) {
   for(var j=0; j<3; j++) {
     for(var k=0; k<3; k++) {
@@ -195,7 +215,7 @@ for(var i=0; i<3; i++) {
         console.log(game.board);
       //  console.log(won);
         if (won) {
-          wonLogic(game.roomId , player.name);
+          wonLogic(game.roomId , player.name , player.username);
         }
         //game.checkWinner();
         //this.board[row][col] = type;
@@ -205,14 +225,26 @@ for(var i=0; i<3; i++) {
   }
 }
 
-function wonLogic(roomId , name) {
-  console.log("I am here");
+function wonLogic(roomId , name , username) {
   var turnObj = {
       room: roomId,
-      name: name
+      name: name,
+      username: username
   };
   socket.emit('playerWon', turnObj);
+  socket.emit('losers', {
+    room: game.roomId,
+  });
 }
+
+socket.on('losers', function(data) {
+  console.log("Looser is: " + $('#turn').attr("name"));
+  //$('#turn').text('You lost' + data.username);
+  socket.emit('reducePoints', {
+    room: game.roomId,
+    username: $('#turn').attr("name")
+  })
+});
 
 function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,row3Col2,row3Col3)
 {
@@ -265,39 +297,6 @@ function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,ro
         //this.createGameBoard();
     }
 
-    // Game.prototype.createGameBoard = function(){
-    //     for(var i=0; i<3; i++) {
-    //         this.board.push(['','','']);
-    //         for(var j=0; j<3; j++) {
-    //             $('#button_' + i + '' + j).on('click', function(){
-    //
-    //                 //Check for turn
-    //                 if(!player.getCurrentTurn()){
-    //                     alert('Its not your turn!');
-    //                     return;
-    //                 }
-    //
-    //                 //Error on playing same button again.
-    //                 if($(this).prop('disabled')){
-    //                     alert('This tile has already been played on!');
-    //                 }
-    //
-    //                 //Update board after your turn.
-    //                 var row = parseInt(this.id.split('_')[1][0]);
-    //                 var col = parseInt(this.id.split('_')[1][1]);
-    //                 game.playTurn(this);
-    //                 game.updateBoard(player.getPlayerType(), row, col, this.id);
-    //
-    //                 player.setCurrentTurn(false);
-    //                 player.updatePlaysArr(1 << (row * 3 + col));
-    //
-    //                 game.checkWinner();
-    //
-    //                 return false;
-    //             });
-    //         }
-    //     }
-    // }
 
     Game.prototype.updateBoard = function(type, row, col, tile){
         $('#'+tile).text(type);
