@@ -109,6 +109,14 @@ socket.on('err', function(data){
   location.reload();
 });
 
+
+socket.on('playerWon', function(data) {
+  var p = document.createElement('p');
+  var t = document.createTextNode(data.name + " won the game.");
+  p.appendChild(t);
+  document.body.appendChild(p);
+});
+
 for(var i=0; i<3; i++) {
   for(var j=0; j<3; j++) {
     for(var k=0; k<3; k++) {
@@ -135,37 +143,75 @@ for(var i=0; i<3; i++) {
         $('#'+this.id).text(player.type);
         $('#'+this.id).prop('disabled', true);
         player.setCurrentTurn(false);
+        var won = false;
         if(isWon(game.board[0][0][0],game.board[0][0][1],game.board[0][0][2],game.board[0][1][0],game.board[0][1][1],game.board[0][1][2],game.board[0][2][0],game.board[0][2][1],game.board[0][2][2]))
         {
-          alert(player.name + " won");
+          won = true;
         }
         else if(isWon(game.board[1][0][0],game.board[1][0][1],game.board[1][0][2],game.board[1][1][0],game.board[1][1][1],game.board[1][1][2],game.board[1][2][0],game.board[1][2][1],game.board[1][2][2]))
         {
-          alert(player.name + " won");
+          won = true;
         }
         else if(isWon(game.board[2][0][0],game.board[2][0][1],game.board[2][0][2],game.board[2][1][0],game.board[2][1][1],game.board[2][1][2],game.board[2][2][0],game.board[2][2][1],game.board[2][2][2]))
         {
-          alert(player.name + " won");
+          won = true;
         }
         else if(isWon(game.board[0][0][0],game.board[1][0][0],game.board[2][0][0],game.board[0][1][0],game.board[1][1][0],game.board[2][1][0],game.board[0][2][0],game.board[1][2][0],game.board[2][2][0]))
         {
-          alert(player.name + " won");
+          won = true;
         }
         else if(isWon(game.board[0][0][1],game.board[1][0][1],game.board[2][0][1],game.board[0][1][1],game.board[1][1][1],game.board[2][1][1],game.board[0][2][1],game.board[1][2][1],game.board[2][2][1]))
         {
-          alert(player.name + " won");
+          won = true;
         }
         else if(isWon(game.board[0][0][2],game.board[1][0][2],game.board[2][0][2],game.board[0][1][2],game.board[1][1][2],game.board[2][1][2],game.board[0][2][2],game.board[1][2][2],game.board[2][2][2]))
         {
-          alert(player.name + " won");
+          won = true;
+        }
+        else if(isWon(game.board[0][0][2],game.board[1][0][2],game.board[2][0][2],game.board[0][1][2],game.board[1][1][2],game.board[2][1][2],game.board[0][2][2],game.board[1][2][2],game.board[2][2][2]))
+        {
+          won = true;
+        }
+        else if(isWon(game.board[0][0][2],game.board[1][0][2],game.board[2][0][2],game.board[0][1][2],game.board[1][1][2],game.board[2][1][2],game.board[0][2][2],game.board[1][2][2],game.board[2][2][2]))
+        {
+          won = true;
+        }
+        else if(game.board[0][0][0] === game.board[1][1][1] && game.board[1][1][1] === game.board[2][2][2] && (game.board[1][1][1] === 'X' || game.board[1][1][1] === 'O'))
+        {
+          won = true;
+        }
+        else if(game.board[0][0][2] === game.board[1][1][1] && game.board[1][1][1] === game.board[2][2][0] && (game.board[1][1][1] === 'X' || game.board[1][1][1] === 'O'))
+        {
+          won = true;
+        }
+        else if(game.board[0][2][0] === game.board[1][1][1] && game.board[1][1][1] === game.board[2][0][2] && (game.board[1][1][1] === 'X' || game.board[1][1][1] === 'O'))
+        {
+          won = true;
+        }
+        else if(game.board[0][2][2] === game.board[1][1][1] && game.board[1][1][1] === game.board[2][0][0] && (game.board[1][1][1] === 'X' || game.board[1][1][1] === 'O'))
+        {
+          won = true;
         }
         console.log(game.board);
+      //  console.log(won);
+        if (won) {
+          wonLogic(game.roomId , player.name);
+        }
         //game.checkWinner();
         //this.board[row][col] = type;
         //this.moves ++;
       })
     }
   }
+}
+
+function wonLogic(roomId , name) {
+  console.log("I am here");
+  var turnObj = {
+      room: roomId,
+      name: name
+  };
+  socket.emit('playerWon', turnObj);
 }
 
 function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,row3Col2,row3Col3)

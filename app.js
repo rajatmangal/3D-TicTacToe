@@ -151,4 +151,8 @@ io.on('connection',function(socket){
     socket.on('gameEnded', function(data){
         socket.broadcast.to(data.room).emit('gameEnd', data);
     });
+
+    socket.on('playerWon', function(data) {
+      io.sockets.to(data.room).emit('playerWon', data);
+    });
 });
