@@ -38,10 +38,52 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Home Page
 app.get('/', function(req, res) {
-  console.log(req.user);
-  res.render("home", {user: req.user});
+  if(!req.user)
+  {
+    res.redirect("/login");
+  }
+  else {
+    res.render("home", {user: req.user});
+  }
+
   //res.send("You are on the Home page!");
-})
+});
+
+app.get('/leaderBoard', function(req, res) {
+  if(req.user){
+    User.find({}, function(err, users) {
+      users.sort(function(a, b) {
+        var pointA = a.totalPoints;
+        var pointB = b.totalPoints;
+        if (pointA < pointB) {
+          return 1;
+        }
+        else {
+          if(pointA > pointB) {
+            return -1;
+          }
+          else {
+            return 0;
+          }
+        }
+      });
+      res.render('leaderBoard', {user: req.user,users: users});
+    });
+  }
+  else {
+    res.redirect("/login");
+  }
+});
+
+
+app.get('/stats', function(req, res) {
+  if(req.user){
+    res.render('stats', {user: req.user});
+  }
+  else {
+    res.redirect("/login");
+  }
+});
 
 
 // Adding route for registering
@@ -55,7 +97,9 @@ app.post('/register', function(req, res) {
   var lastName = req.body.lastName;
   var username = req.body.username;
   var email = req.body.email;
-  var newUser = new User({firstName: firstName, lastName: lastName, username: username, email: email, gamesWon: 0, gamesLost: 0, totalPoints: 0});
+  var gender = req.body.gender;
+  var age = req.body.age;
+  var newUser = new User({firstName: firstName, lastName: lastName, username: username, email: email, age: age, gender: gender, gamesWon: 0, gamesLost: 0, totalPoints: 0});
   User.register(newUser, req.body.password, function(err, user) {
     if(err) {
       console.log(err);
@@ -76,9 +120,28 @@ app.get('/login', function(req, res) {
     res.redirect('/');
   }
   else {
-    res.render('login.ejs');
+    res.render('login');
   }
 
+});
+
+app.get('/features', function(req, res) {
+  if(loggedIn(req, res)) {
+    res.render('features', {user: req.user});
+  }
+  else {
+    res.redirect("/");
+  }
+});
+
+
+app.get('/profile', function(req, res) {
+  if(loggedIn(req, res)) {
+    res.render('profile', {user: req.user});
+  }
+  else {
+    res.redirect('/login');
+  }
 });
 
 // Below passport.authenticate is the middleware that would run first when a post request to /login comes up
@@ -169,10 +232,84 @@ io.on('connection',function(socket){
           if (err) {
             throw err;
           }
+          var timeStarted;
+
+          if (data.start1 != undefined) {
+            timeStarted = data.start1;
+          }
+          else {
+            timeStarted = data.start2;
+          }
+          User.update({username: data.username}, {$push: {games: {gameStart: timeStarted, gameEnd: Date.now(), result: "won", moves: data.moves}}}, function(err, result) {
+            if(err){
+              throw err;
+            }
+            console.log(result);
+          });
         });
         io.sockets.to(data.room).emit('playerWon', data);
       });
 
+    });
+
+    socket.on("quit", function(data) {
+      var gamesLost1;
+      var totalPoints1;
+
+      User.find({username: data.username}, function(err, user) {
+        gamesLost1 = user[0].gamesLost + 1;
+        totalPoints1 = user[0].totalPoints - 5;
+        //console.log("user is: " + user[0].username + "  " + user[0].gamesWon);
+        User.update({username: data.username}, {$set: {gamesLost: gamesLost1, totalPoints: totalPoints1}}, function(err, result) {
+          if (err) {
+            throw err;
+          }
+          var timeStarted;
+          if (data.start1 != undefined) {
+            timeStarted = data.start1;
+          }
+          else {
+            timeStarted = data.start2;
+          }
+          User.update({username: data.username}, {$push: {games: {gameStart: timeStarted, gameEnd: Date.now(), result: "lost", moves: data.moves}}}, function(err, result) {
+            console.log(result);
+            socket.broadcast.to(data.room).emit("quit", data);
+          });
+        });
+      });
+    });
+
+    socket.on("increasePoints", function(data) {
+      var gamesWon1;
+      var totalPoints1;
+
+      User.find({username: data.username}, function(err, user) {
+        if(err) {
+          throw err;
+        }
+        gamesWon1 = user[0].gamesWon + 1;
+        totalPoints1 = user[0].totalPoints + 10;
+
+        User.update({username: data.username}, {$set: {gamesWon: gamesWon1, totalPoints: totalPoints1}}, function(err, result) {
+          if (err) {
+            throw err;
+          }
+          var timeStarted;
+
+          if (data.start1 != undefined) {
+            timeStarted = data.start1;
+          }
+          else {
+            timeStarted = data.start2;
+          }
+          User.update({username: data.username}, {$push: {games: {gameStart: timeStarted, gameEnd: Date.now(), result: "won", moves: data.moves}}}, function(err, result) {
+            if(err){
+              throw err;
+            }
+            console.log(result);
+          });
+        });
+      });
     });
 
     socket.on('losers', function(data) {
@@ -182,16 +319,25 @@ io.on('connection',function(socket){
     socket.on('reducePoints', function(data) {
       var gamesLost1;
       var totalPoints1;
-      console.log("data username is: " + data.username);
+      //console.log("data username is: " + data.username);
       User.find({username: data.username}, function(err, user) {
         gamesLost1 = user[0].gamesLost + 1;
         totalPoints1 = user[0].totalPoints - 5;
-        console.log("user is: " + user[0].username + "  " + user[0].gamesWon);
+        //console.log("user is: " + user[0].username + "  " + user[0].gamesWon);
         User.update({username: data.username}, {$set: {gamesLost: gamesLost1, totalPoints: totalPoints1}}, function(err, result) {
           if (err) {
             throw err;
           }
-          console.log(result)
+          var timeStarted;
+          if (data.start1 != undefined) {
+            timeStarted = data.start1;
+          }
+          else {
+            timeStarted = data.start2;
+          }
+          User.update({username: data.username}, {$push: {games: {gameStart: timeStarted, gameEnd: Date.now(), result: "lost", moves: data.moves}}}, function(err, result) {
+            console.log(result);
+          });
         });
       });
 

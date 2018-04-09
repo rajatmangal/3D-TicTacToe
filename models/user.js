@@ -11,7 +11,13 @@ var UserSchema = new mongoose.Schema({
   password: String,
   gamesWon: Number,
   gamesLost: Number,
-  totalPoints: Number
+  totalPoints: Number,
+  games: [{
+    gameStart: Date,
+    gameEnd: Date,
+    result: String,
+    moves: Number
+  }]
 });
 
 // This adds some methods to the UserSchema

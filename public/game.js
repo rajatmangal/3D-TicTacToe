@@ -1,5 +1,10 @@
 var socket = io.connect('http://localhost:3000');
-
+var start;
+// console.log(start);
+// start = Date.now();
+// console.log(start);
+var start2;
+var end;
 
 var Player = function(name, type , username){
     this.name = name;
@@ -34,8 +39,9 @@ $('#new').on('click', function(){
         alert('Please enter your name.');
         return;
     }
+    start = new Date();
     socket.emit('startNewGame', {name: name});
-    console.log(username);
+    //console.log(username);
     player = new Player(name, PlayerOne , username);
 });
 
@@ -47,12 +53,48 @@ $('#join').on('click', function(){
         alert('Please enter your name and game ID.');
         return;
     }
+    start2 = new Date();
+    console.log(start2);
     socket.emit('joinExistingGame', {
       name: name,
       room: roomID,
     });
-    console.log(username);
+    //console.log(username);
     player = new Player(name, PlayerTwo, username);
+});
+
+$("#quit").on("click", function(){
+  var username = $('#quit').attr("name");
+  socket.emit("quit", {
+    room: game.roomId,
+    username: username,
+    start1: start,
+    start2: start2,
+    moves: game.moves
+
+  })
+});
+
+socket.on("quit", function(data) {
+  var username = $('#quit').attr("name");
+  for(var i=0; i<3; i++) {
+    for(var j=0; j<3; j++) {
+      for(var k=0; k<3; k++) {
+        $('#' + i + '' + j + '' + k).off();
+        $('#' + i + '' + j + '' + k).on('click', function(){
+          alert("Sorry the game is already over. Please start a new game.")
+        });
+      }
+    }
+  }
+  $('#turn').text("You Won. Your opponent left the game!");
+  socket.emit("increasePoints", {
+    room: game.roomId,
+    username: username,
+    start1: start,
+    start2: start2,
+    moves: game.moves
+  });
 });
 
 socket.on('newGame', function(data){
@@ -64,8 +106,9 @@ socket.on('newGame', function(data){
     // Create game for player 1
     game = new Game(data.room);
     $('.menu').css('display', 'none');
-    $('.gameBoard').css('display', 'block');
+    $('#userHello').css('display', 'block');
     $('#userHello').html(message);
+
     //game.displayBoard(message);
 });
 
@@ -75,7 +118,7 @@ socket.on('player1', function(data){
 
     // Reset the message for the player
     $('#userHello').html(message);
-
+    $('.gameBoard').css('display', 'block');
     // Set the current player's turn
     player.setCurrentTurn(true);
 });
@@ -127,7 +170,10 @@ socket.on('playerWon', function(data) {
       }
     }
   }
- $('#turn').text(data.name + ' won');
+ $('#turn').text(data.name + ' won' + ". Please check game stats from the dropdown menu for more information.");
+
+
+
   // socket.emit('losers', {
   //   room: game.roomId,
   //   username: $('#turn').attr("name")
@@ -153,7 +199,6 @@ for(var i=0; i<3; i++) {
         var row = parseInt(clickedTile.charAt(1));
         var col = parseInt(clickedTile.charAt(2));
         game.board[board][row][col] = player.type;
-        console.log(game.board[1][1][1])
 
         var turnObj = {
             tile: clickedTile,
@@ -212,11 +257,13 @@ for(var i=0; i<3; i++) {
         {
           won = true;
         }
-        console.log(game.board);
+        //console.log(game.board);
       //  console.log(won);
+      game.moves++;
         if (won) {
           wonLogic(game.roomId , player.name , player.username);
         }
+
         //game.checkWinner();
         //this.board[row][col] = type;
         //this.moves ++;
@@ -229,7 +276,11 @@ function wonLogic(roomId , name , username) {
   var turnObj = {
       room: roomId,
       name: name,
-      username: username
+      username: username,
+      start1: start,
+      start2: start2,
+      moves: game.moves
+
   };
   socket.emit('playerWon', turnObj);
   socket.emit('losers', {
@@ -238,11 +289,14 @@ function wonLogic(roomId , name , username) {
 }
 
 socket.on('losers', function(data) {
-  console.log("Looser is: " + $('#turn').attr("name"));
+  //console.log("Looser is: " + $('#turn').attr("name"));
   //$('#turn').text('You lost' + data.username);
   socket.emit('reducePoints', {
     room: game.roomId,
-    username: $('#turn').attr("name")
+    username: $('#turn').attr("name"),
+    start1: start,
+    start2: start2,
+    moves: game.moves
   })
 });
 
@@ -292,6 +346,7 @@ function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,ro
 
     Game.prototype.displayBoard = function(message){
         $('.menu').css('display', 'none');
+        $('.stats').css('display', 'none');
         $('.gameBoard').css('display', 'block');
         $('#userHello').html(message);
         //this.createGameBoard();
@@ -349,7 +404,7 @@ function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,ro
 
 
 
-    Player.wins = [7, 56, 448, 73, 146, 292, 273, 84];
+    //Player.wins = [7, 56, 448, 73, 146, 292, 273, 84];
 
     Player.prototype.updatePlaysArr = function(tileValue){
         this.playsArr += tileValue;
@@ -361,20 +416,21 @@ function isWon(row1Col1,row1Col2,row1Col3,row2Col1,row2Col2,row2Col3,row3Col1,ro
 
     Player.prototype.setCurrentTurn = function(turn){
         this.currentTurn = turn;
-        console.log("I am working");
         if(turn)
             $('#turn').text('Your turn.');
         else
-            $('#turn').text('Waiting for Opponent');
+            $('#turn').text("Waiting for your Opponent's turn");
+    }
+
+    Player.prototype.getPlayerType = function(){
+        return this.type;
     }
 
     Player.prototype.getPlayerName = function(){
         return this.name;
     }
 
-    Player.prototype.getPlayerType = function(){
-        return this.type;
-    }
+
 
     Player.prototype.getCurrentTurn = function(){
         return this.currentTurn;

@@ -8,27 +8,77 @@
   </head>
   <body>
   <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">TicTacToe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/features">Features</a>
+      </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <li class="nav-item dropdown navbar-right">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Welcome <%=user.username%>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/leaderBoard">Leader Board</a>
+          <a class="dropdown-item" href="/stats">Players Stats</a>
+          <a class="dropdown-item" href="/profile">Profile</a>
+          <a class="dropdown-item" href="logout">SignOut</a>
+        </div>
+
+      </li>
+      </ul>
+    </ul>
+  </div>
+</nav>
+<br>
            <div class="menu">
              <div class="jumbotron">
                <h2>Welcome to 3D tic tac toe game</h2>
              </div>
 
 
-
-              <h4> Welcome <%= user.firstName + " " + user.lastName %>         Won:-<%= user.gamesWon %>       Lost:-<%= user.gamesLost %></h4>
-               <h4>Create a new Game</h4>
+             <center>
+              <h3> Welcome <%= user.firstName + " " + user.lastName %><br></h3>
+              <h4>Number of Games Won:-<%= user.gamesWon %>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      Number of Games Lost:-<%= user.gamesLost %></h4><br>
+               <h4>Initialize a new Game</h4>
                <!-- <input type="text" name="name" id="nameNew" placeholder="Enter your name" required> -->
                <button name=<%= user.firstName%> name1=<%= user.username%> class="btn btn-info" id="new">New Game</button>
                <br><br>
                <h4>Join an existing game</h4>
-               <input type="text" name="room" id="room" placeholder="Enter Game ID" required>
+               <input type="text" name="room" id="room" placeholder="Game ID here" required>
                <button name=<%= user.firstName%> name1=<%= user.username%> class="btn btn-info" id="join">Join Game</button>
+             </center>
            </div>
+           <h2 id="userHello"></h2>
            <div class="gameBoard">
              <div class="jumbotron">
                <h2>Welcome to 3D tic tac toe game</h2>
              </div>
-               <h2 id="userHello"></h2>
                <h3 name=<%= user.username%> id="turn"></h3>
                <center><img src="pic.jpg"></center>
                <div class="row">
@@ -93,6 +143,7 @@
                </table>
              </div>
            </div>
+           <center><a href="/"><button class="btn btn-primary" id="quit" name=<%=user.username%>>Quit</button></a></center>
            </div>
        </div>
 
@@ -112,16 +163,16 @@
              <div class="card-body">
                <ul>
                    <li>You have 2 options i.e. either to create a new game or enter a ongoing game.</li>
-                   <li>If you will click on create a new game then you can start a new game and other players can join you game.</li>
+                   <li>If you will click on create a new game then you can start a new game and other players can join your game.</li>
                    <li>If you will click on join game then you have to fill the room id to join that existing game.</li>
-                   <li>If the ongoing game alredy has 2 players then you cananot join the game.</li>
+                   <li>If the ongoing game already has 2 players then you cananot join the game.</li>
                </ul>
              </div>
            </div>
          </div>
        </div>
      </div>
-    <center> <a href="./logout"><button class="btn btn-info">Log Out</button></a> </center>
+
        <script src="jquery-3.3.1.js"></script>
        <script type="text/javascript" src="bootstrap.js"></script>
        <script src="game.js"></script>

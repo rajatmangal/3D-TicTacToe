@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.dev.js"></script>
+  </head>
+  <body>
+<div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<a class="navbar-brand" href="#">TicTacToe</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNavDropdown">
+  <ul class="navbar-nav">
+    <li class="nav-item active">
+      <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/features">Features</a>
+    </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <li class="nav-item dropdown navbar-right">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Welcome <%=user.username%>
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="/leaderBoard">Leader Board</a>
+        <a class="dropdown-item" href="/stats">Players Stats</a>
+        <a class="dropdown-item" href="/profile">Profile</a>
+        <a class="dropdown-item" href="logout">SignOut</a>
+      </div>
+
+    </li>
+    </ul>
+  </ul>
+</div>
+</nav>
+<br>
+  <div class="jumbotron">
+    <h2> The application supports the following features </h2>
+  </div>
+  <br>
+    <ul>
+      <li> It allows infinite amount of games to be played at the same time with different users in different rooms </li>
+      <li> For each player, the application maintains a set of all the games he has played </li>
+      <li> The user could go on PlayerStats from the dropdown menu in navbar that displays all
+        all the games that the user has played. Each game includes the start time, end time, won/loss and moves played </li>
+      <li> Also,PlayerStats displays number of games won, number of games lost and total points for that user </li>
+      <li> For each win, the user is given 10 points and for each loss, 5 points are taken away from the user </li>
+      <li> User could also check where does he stand among the crowd by checking the LeaderBoard from the dropdown menu in
+        the navbar. The LeaderBoaed displays all the users (first name and last name) ranked according to total points with the
+        number of points accomodated by the user </li>
+      <li> User could also quit the game in between using the quit button on the game playing page. This would mean a loss
+        for that player and a win for the opponent </li>
+    </ul>
+
+
+    <script src="jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="bootstrap.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
