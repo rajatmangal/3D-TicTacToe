@@ -1,1 +1,1 @@
-# cmpt218TicTacToe
+# 3D-TicTacToe
